@@ -1,35 +1,42 @@
 pipeline {
     agent any
+
+    environment {
+        GITHUB_CONTEXT = "Jenkins Build Status"
+    }
+
     stages {
         stage('Build') {
             steps {
-                echo 'Building...'
+                echo 'Running build...'
+                // Example build command
+                // sh 'make build' or sh 'mvn clean install'
             }
         }
+
         stage('Test') {
             steps {
                 echo 'Running tests...'
+                // Example test command
+                // sh 'make test' or sh 'mvn test'
             }
         }
     }
+
     post {
         success {
-            echo 'Pipeline succeeded!'
-            githubStatus(
-                context: 'jenkins/build',
-                description: 'Build passed',
-                status: 'SUCCESS'
-            )
+            script {
+                githubNotify context: env.GITHUB_CONTEXT, status: 'SUCCESS', description: 'Build passed'
+            }
         }
         failure {
-            echo 'Pipeline failed!'
-            githubStatus(
-                context: 'jenkins/build',
-                description: 'Build failed',
-                status: 'FAILURE'
-            )
             script {
-                currentBuild.result = 'FAILURE'
+                githubNotify context: env.GITHUB_CONTEXT, status: 'FAILURE', description: 'Build failed'
+            }
+        }
+        unstable {
+            script {
+                githubNotify context: env.GITHUB_CONTEXT, status: 'FAILURE', description: 'Build unstable'
             }
         }
     }

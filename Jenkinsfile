@@ -28,7 +28,9 @@ pipeline {
                 description: 'Build failed',
                 status: 'FAILURE'
             )
-            currentBuild.result = 'FAILURE'
+            script {
+                currentBuild.result = 'FAILURE'
+            }
         }
     }
 }

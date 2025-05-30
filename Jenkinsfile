@@ -14,10 +14,21 @@ pipeline {
     }
     post {
         success {
-            githubNotify context: 'CI', status: 'SUCCESS'
+            echo 'Pipeline succeeded!'
+            githubStatus(
+                context: 'jenkins/build',
+                description: 'Build passed',
+                status: 'SUCCESS'
+            )
         }
         failure {
-            githubNotify context: 'CI', status: 'FAILURE'
+            echo 'Pipeline failed!'
+            githubStatus(
+                context: 'jenkins/build',
+                description: 'Build failed',
+                status: 'FAILURE'
+            )
+            currentBuild.result = 'FAILURE'
         }
     }
 }
